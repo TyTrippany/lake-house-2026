@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Summer Lake House Bash</title>
+<style>
+  /* ============================================================
+     SUMMER LAKE HOUSE BASH
+     Single-file site. Edit content in the HTML below.
+     Key things you may want to change are marked with: EDIT ME
+     ============================================================ */
+
+  :root {
+    --sunset:   #ff6b35;   /* bold orange */
+    --coral:    #ff3e6c;   /* pink-red */
+    --gold:     #ffc857;   /* sunny yellow */
+    --lake:     #1ca9c9;   /* lake teal */
+    --deep:     #0b4f6c;   /* deep water */
+    --cream:    #fff7ec;
+    --ink:      #15202b;
+    --shadow:   0 10px 30px rgba(11,79,108,.18);
+    --radius:   22px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: "Trebuchet MS", "Segoe UI", system-ui, sans-serif;
+    color: var(--ink);
+    line-height: 1.6;
+    /* EASTER-EGG BACKGROUND:
+       This is a layered, summery gradient used as a placeholder.
+       To use your own cropped teaser photos, replace the gradients
+       below with: url('photo1.jpg'), url('photo2.jpg') etc.
+       Keep them cropped/zoomed so the house stays a surprise! */
+    background:
+      radial-gradient(circle at 12% 18%, rgba(255,200,87,.35), transparent 30%),
+      radial-gradient(circle at 85% 12%, rgba(255,62,108,.30), transparent 32%),
+      radial-gradient(circle at 78% 82%, rgba(28,169,201,.40), transparent 38%),
+      radial-gradient(circle at 18% 88%, rgba(255,107,53,.30), transparent 34%),
+      linear-gradient(160deg, #aee9f5 0%, #d8f3f8 40%, #fff7ec 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
+  }
+
+  .wrap { max-width: 900px; margin: 0 auto; padding: 20px 18px 70px; }
+
+  section {
+    background: rgba(255,255,255,.86);
+    backdrop-filter: blur(4px);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 30px 26px;
+    margin: 22px 0;
+  }
+
+  h2 {
+    font-size: clamp(1.5rem, 4vw, 2.1rem);
+    color: var(--deep);
+    margin-bottom: 14px;
+    display: flex; align-items: center; gap: 10px;
+  }
+
+  /* ---------- HERO ---------- */
+  .hero {
+    text-align: center;
+    color: #fff;
+    border-radius: var(--radius);
+    margin-top: 24px;
+    padding: 54px 24px;
+    position: relative;
+    overflow: hidden;
+    /* EASTER-EGG HERO IMAGE: swap the gradient for a cropped lake photo:
+       background: linear-gradient(rgba(11,79,108,.45),rgba(255,62,108,.45)), url('hero.jpg') center/cover; */
+    background:
+      linear-gradient(135deg, rgba(255,107,53,.92), rgba(255,62,108,.86) 45%, rgba(28,169,201,.92));
+    box-shadow: var(--shadow);
+  }
+  .hero h1 {
+    font-size: clamp(2.3rem, 8vw, 4rem);
+    line-height: 1.05;
+    text-shadow: 0 4px 16px rgba(0,0,0,.25);
+    letter-spacing: .5px;
+  }
+  .hero .sub {
+    margin-top: 12px;
+    font-size: clamp(1rem, 3vw, 1.3rem);
+    font-weight: bold;
+    text-shadow: 0 2px 8px rgba(0,0,0,.25);
+  }
+  .hero .dates {
+    display:inline-block;
+    margin-top: 18px;
+    background: rgba(255,255,255,.22);
+    border: 2px solid rgba(255,255,255,.6);
+    padding: 8px 18px;
+    border-radius: 999px;
+    font-weight: bold;
+  }
+  .emoji-row { font-size: 1.8rem; margin-bottom: 6px; letter-spacing: 6px; }
+
+  /* ---------- COUNTDOWN ---------- */
+  .count-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-top: 8px;
+  }
+  .count-box {
+    background: linear-gradient(160deg, var(--lake), var(--deep));
+    color: #fff;
+    border-radius: 16px;
+    padding: 18px 6px;
+    text-align: center;
+  }
+  .count-box .num { font-size: clamp(1.6rem, 7vw, 2.6rem); font-weight: bold; line-height:1; }
+  .count-box .lbl { font-size: .75rem; text-transform: uppercase; letter-spacing: 1px; opacity: .9; margin-top:6px; }
+  .count-note { text-align:center; margin-top:14px; font-weight:bold; color: var(--sunset); }
+
+  /* ---------- CELEBRATIONS ---------- */
+  .party-banner {
+    background: linear-gradient(120deg, var(--gold), var(--coral));
+    color: #fff;
+    text-align:center;
+    padding: 24px;
+    border-radius: 16px;
+    font-size: clamp(1.05rem, 3.2vw, 1.3rem);
+    font-weight: bold;
+    text-shadow: 0 2px 6px rgba(0,0,0,.2);
+  }
+  .cake-list { list-style:none; margin-top:16px; display:grid; gap:10px; }
+  .cake-list li {
+    background: var(--cream);
+    border-left: 6px solid var(--coral);
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-weight: bold;
+  }
+
+  /* ---------- WEATHER ---------- */
+  #weather-now {
+    display:flex; align-items:center; gap:18px; flex-wrap:wrap;
+    background: linear-gradient(160deg, #eafaff, #fff);
+    border-radius: 16px; padding: 18px 20px;
+  }
+  #weather-now .temp { font-size: 3rem; font-weight:bold; color: var(--deep); }
+  #weather-now .ico { font-size: 3rem; }
+  .forecast { display:grid; grid-template-columns: repeat(auto-fit,minmax(90px,1fr)); gap:10px; margin-top:16px; }
+  .fc-day { background: var(--cream); border-radius:12px; padding:12px 6px; text-align:center; }
+  .fc-day .d { font-weight:bold; color: var(--deep); font-size:.85rem; }
+  .fc-day .i { font-size:1.6rem; margin:4px 0; }
+  .fc-day .t { font-size:.85rem; }
+  .typical {
+    margin-top: 16px; background: var(--cream); border-radius: 12px; padding: 14px 16px;
+    border-left: 6px solid var(--gold);
+  }
+
+  /* ---------- GUESTS ---------- */
+  .guest-grid { display:grid; gap:14px; grid-template-columns: repeat(auto-fit, minmax(250px,1fr)); }
+  .guest-card {
+    background: var(--cream);
+    border-radius: 16px;
+    padding: 16px 18px;
+    border-top: 6px solid var(--lake);
+  }
+  .guest-card.host    { border-top-color: var(--sunset); }
+  .guest-card.tbd     { border-top-color: var(--gold); opacity:.96; }
+  .guest-card h3 { color: var(--deep); font-size:1.1rem; margin-bottom:4px; }
+  .guest-card .when { font-weight:bold; color: var(--coral); font-size:.9rem; }
+  .guest-card .note { font-size:.9rem; margin-top:6px; }
+  .travel {
+    margin-top:10px; background:#fff; border-radius:10px; padding:10px 12px; font-size:.85rem;
+    border:1px dashed var(--lake);
+  }
+  .travel b { color: var(--deep); }
+  .pill { display:inline-block; background:var(--gold); color:var(--ink); font-size:.7rem; font-weight:bold;
+    padding:2px 9px; border-radius:999px; margin-left:6px; vertical-align:middle; }
+
+  /* ---------- LOGISTICS ---------- */
+  .info-grid { display:grid; gap:14px; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); }
+  .info-card { background: var(--cream); border-radius:14px; padding:16px; }
+  .info-card h3 { color: var(--deep); font-size:1rem; margin-bottom:6px; }
+  .info-card p { font-size:.9rem; }
+
+  .teaser-link {
+    display:inline-block; margin-top:8px; color:#fff; background:var(--sunset);
+    padding:10px 18px; border-radius:999px; text-decoration:none; font-weight:bold;
+    box-shadow: var(--shadow);
+  }
+  .teaser-link:hover { background: var(--coral); }
+
+  footer { text-align:center; color: var(--deep); font-size:.85rem; padding: 10px; opacity:.8; }
+
+  @media (max-width: 480px) {
+    section { padding: 22px 16px; }
+    .count-grid { gap: 8px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ============ HERO ============ -->
+  <header class="hero">
+    <div class="emoji-row">🌊 ☀️ 🛥️ 🎉 🍉</div>
+    <h1>Summer Lake House Bash</h1>
+    <div class="sub">A secret spot on beautiful Lake Norman, North Carolina</div>
+    <div class="dates">Mon, July 20 &ndash; Fri, July 24, 2026</div>
+  </header>
+
+  <!-- ============ COUNTDOWN ============ -->
+  <section>
+    <h2>⏳ Countdown to Lake Time</h2>
+    <div class="count-grid">
+      <div class="count-box"><div class="num" id="cd-days">--</div><div class="lbl">Days</div></div>
+      <div class="count-box"><div class="num" id="cd-hours">--</div><div class="lbl">Hours</div></div>
+      <div class="count-box"><div class="num" id="cd-mins">--</div><div class="lbl">Minutes</div></div>
+      <div class="count-box"><div class="num" id="cd-secs">--</div><div class="lbl">Seconds</div></div>
+    </div>
+    <div class="count-note" id="cd-note">until we hit the water!</div>
+  </section>
+
+  <!-- ============ CELEBRATIONS ============ -->
+  <section>
+    <h2>🎂 A Triple Birthday Bash</h2>
+    <div class="party-banner">
+      This whole trip is one big celebration! 🥳
+    </div>
+    <ul class="cake-list">
+      <!-- EDIT ME: birthday people -->
+      <li>🎈 Ty turns the BIG 4-0 &mdash; the reason we're all here!</li>
+      <li>🎈 It's birthday week for Mimi (the lake-house birthday girl)!</li>
+      <li>🎈 And birthday week for my brother too &mdash; fingers crossed he can join!</li>
+    </ul>
+  </section>
+
+  <!-- ============ WEATHER ============ -->
+  <section>
+    <h2>🌤️ Lake Norman Weather</h2>
+    <div id="weather-now">
+      <div class="ico" id="w-ico">⛅</div>
+      <div>
+        <div class="temp" id="w-temp">Loading…</div>
+        <div id="w-desc">Fetching the latest forecast…</div>
+      </div>
+    </div>
+    <div class="forecast" id="forecast"></div>
+    <div class="typical">
+      <b>What to expect in late July:</b> Hot and summery! Highs around <b>91&deg;F</b>,
+      lows near <b>70&deg;F</b>, and humid (about 64%). Warm, a little sticky, with a small
+      chance of afternoon storms. Pack swimsuits, sunscreen, hats, and water shoes. ☀️🩴
+    </div>
+  </section>
+
+  <!-- ============ GUESTS + TRAVEL ============ -->
+  <section>
+    <h2>👨‍👩‍👧‍👦 Who's Coming</h2>
+    <div class="guest-grid">
+
+      <!-- EDIT ME: guest cards -->
+      <div class="guest-card host">
+        <h3>Ty &amp; Chelsie</h3>
+        <span class="when">Mon Jul 20 &ndash; Fri Jul 24</span>
+        <div class="note">Your hosts! 🏡 (And the birthday boy 🎉)</div>
+      </div>
+
+      <div class="guest-card host">
+        <h3>Hunter &amp; Mia</h3>
+        <span class="when">Mon Jul 20 &ndash; Fri Jul 24</span>
+        <div class="note">The kids! Hunter just wrapped 8th grade and is off to high school 🎓.
+        Each of them will invite a friend for a few days. <span class="pill">friends: TBD</span></div>
+      </div>
+
+      <div class="guest-card">
+        <h3>Noah &amp; Mimi</h3>
+        <span class="when">Arrive Tue Jul 21</span>
+        <div class="note">My sister &amp; her husband. Staying with us / nearby Friday night, then flying out Saturday.</div>
+        <div class="travel">
+          <b>✈️ Arrive Tue, Jul 21</b><br>
+          AA5562 nonstop BTV → CLT<br>
+          7:56 AM → 10:25 AM<br><br>
+          <b>✈️ Depart Sat, Jul 25</b><br>
+          AA5093 nonstop CLT → BTV<br>
+          11:26 AM → 1:51 PM
+        </div>
+      </div>
+
+      <div class="guest-card tbd">
+        <h3>Annette (Nana)</h3>
+        <span class="when">Dates TBD</span>
+        <div class="note">My mom 💛</div>
+      </div>
+
+      <div class="guest-card tbd">
+        <h3>Kay &amp; Bruce</h3>
+        <span class="when">Dates TBD</span>
+        <div class="note">My aunt &amp; her husband.</div>
+      </div>
+
+      <div class="guest-card tbd">
+        <h3>My Brother</h3>
+        <span class="when">Hopefully! 🤞</span>
+        <div class="note">It's his birthday week too &mdash; still confirming if he can make it.</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ LOGISTICS ============ -->
+  <section>
+    <h2>📋 Good to Know</h2>
+    <div class="info-grid">
+      <!-- EDIT ME: fill these in when ready -->
+      <div class="info-card">
+        <h3>📍 Where</h3>
+        <p>On beautiful Lake Norman, NC. Exact spot is a <b>surprise</b>! About 1 hr 20 min from our
+        house and roughly 45 min from Charlotte airport (CLT).</p>
+        <a class="teaser-link" href="https://www.staylakenorman.com/rentals/shoreline-on-stonemarker/" target="_blank" rel="noopener">A little sneak peek… 👀</a>
+      </div>
+      <div class="info-card">
+        <h3>🛎️ Check-in / out</h3>
+        <p>Check-in: Mon, Jul 20.<br>Check-out: Fri, Jul 24.<br><em>Times: TBD</em></p>
+      </div>
+      <div class="info-card">
+        <h3>📶 WiFi</h3>
+        <p><em>Network &amp; password: TBD &mdash; will share closer to the trip.</em></p>
+      </div>
+      <div class="info-card">
+        <h3>🚗 Parking</h3>
+        <p><em>Details TBD.</em></p>
+      </div>
+      <div class="info-card">
+        <h3>🧳 What to Pack</h3>
+        <p>Swimsuits, towels, sunscreen, hats, water shoes, sunglasses, and a light layer for evenings.</p>
+      </div>
+      <div class="info-card">
+        <h3>🍽️ Nearby</h3>
+        <p><em>Grocery, restaurants &amp; activities: TBD.</em></p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    Made with ☀️ for the Summer Lake House Bash &middot; July 2026
+  </footer>
+
+</div>
+
+<script>
+  /* ---------- COUNTDOWN ---------- */
+  // EDIT ME: target check-in date/time (local). Months are 0-indexed: 6 = July.
+  var target = new Date(2026, 6, 20, 16, 0, 0); // July 20, 2026, 4:00 PM (typical check-in)
+
+  function tick() {
+    var now = new Date();
+    var diff = target - now;
+    var note = document.getElementById('cd-note');
+
+    if (diff <= 0) {
+      document.getElementById('cd-days').textContent = 0;
+      document.getElementById('cd-hours').textContent = 0;
+      document.getElementById('cd-mins').textContent = 0;
+      document.getElementById('cd-secs').textContent = 0;
+      note.textContent = "🎉 It's lake time! Welcome to the bash! 🎉";
+      return;
+    }
+    var d = Math.floor(diff / 86400000);
+    var h = Math.floor(diff % 86400000 / 3600000);
+    var m = Math.floor(diff % 3600000 / 60000);
+    var s = Math.floor(diff % 60000 / 1000);
+    document.getElementById('cd-days').textContent  = d;
+    document.getElementById('cd-hours').textContent = h;
+    document.getElementById('cd-mins').textContent  = m;
+    document.getElementById('cd-secs').textContent  = s;
+  }
+  tick();
+  setInterval(tick, 1000);
+
+  /* ---------- WEATHER (Open-Meteo, free, no key) ---------- */
+  // Coordinates: Lake Norman / Mooresville, NC area (not the exact house).
+  var LAT = 35.585, LON = -80.810;
+  var WMO = {
+    0:['☀️','Clear sky'],1:['🌤️','Mostly clear'],2:['⛅','Partly cloudy'],3:['☁️','Overcast'],
+    45:['🌫️','Fog'],48:['🌫️','Fog'],51:['🌦️','Light drizzle'],53:['🌦️','Drizzle'],55:['🌧️','Drizzle'],
+    61:['🌦️','Light rain'],63:['🌧️','Rain'],65:['🌧️','Heavy rain'],
+    71:['🌨️','Snow'],73:['🌨️','Snow'],75:['❄️','Heavy snow'],
+    80:['🌦️','Showers'],81:['🌧️','Showers'],82:['⛈️','Heavy showers'],
+    95:['⛈️','Thunderstorm'],96:['⛈️','Thunderstorm'],99:['⛈️','Severe storm']
+  };
+  function code(c){ return WMO[c] || ['🌡️','—']; }
+
+  var url = 'https://api.open-meteo.com/v1/forecast?latitude=' + LAT + '&longitude=' + LON +
+    '&current=temperature_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min' +
+    '&temperature_unit=fahrenheit&timezone=America%2FNew_York&forecast_days=7';
+
+  fetch(url)
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      var cur = data.current;
+      var ci = code(cur.weather_code);
+      document.getElementById('w-ico').textContent  = ci[0];
+      document.getElementById('w-temp').textContent = Math.round(cur.temperature_2m) + '°F';
+      document.getElementById('w-desc').textContent = ci[1] + ' right now at Lake Norman';
+
+      var days = data.daily;
+      var box = document.getElementById('forecast');
+      var names = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+      for (var i = 0; i < days.time.length; i++) {
+        var dt = new Date(days.time[i] + 'T12:00:00');
+        var di = code(days.weather_code[i]);
+        var el = document.createElement('div');
+        el.className = 'fc-day';
+        el.innerHTML = '<div class="d">' + names[dt.getDay()] + '</div>' +
+                       '<div class="i">' + di[0] + '</div>' +
+                       '<div class="t">' + Math.round(days.temperature_2m_max[i]) + '° / ' +
+                       Math.round(days.temperature_2m_min[i]) + '°</div>';
+        box.appendChild(el);
+      }
+    })
+    .catch(function(){
+      document.getElementById('w-temp').textContent = '—';
+      document.getElementById('w-desc').textContent =
+        'Live weather unavailable right now. See the typical late-July outlook below. 👇';
+    });
+</script>
+</body>
+</html>
