@@ -4,427 +4,574 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Summer Lake House Bash</title>
-<style>
-  /* ============================================================
-     SUMMER LAKE HOUSE BASH
-     Single-file site. Edit content in the HTML below.
-     Key things you may want to change are marked with: EDIT ME
-     ============================================================ */
 
+<!-- =========================================================================
+     SUMMER LAKE HOUSE BASH  ·  single-file site
+     -------------------------------------------------------------------------
+     ADDING YOUR OWN PHOTOS (keeps the location a surprise!):
+       Drop image files into THIS SAME FOLDER, named exactly:
+         hero.jpg     -> big background behind the title (a wide teaser:
+                         water + sky + sunset works great)
+         scene1.jpg   -> full-screen band #1 (e.g. sun glinting on water)
+         scene2.jpg   -> full-screen band #2 (e.g. a dock or paddleboard)
+         scene3.jpg   -> full-screen band #3 (e.g. fire pit / evening)
+         teaser1.jpg ... teaser4.jpg -> the small "polaroid" peek photos
+       Tips: use CROPPED / detail shots so the actual house stays hidden.
+       Until a file exists, a pretty animated gradient shows in its place,
+       so the site always looks finished. .png/.jpeg work too if you edit
+       the filenames in the CSS variables block marked PHOTO SLOTS below.
+     ========================================================================= -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
   :root {
-    --sunset:   #ff6b35;   /* bold orange */
-    --coral:    #ff3e6c;   /* pink-red */
-    --gold:     #ffc857;   /* sunny yellow */
-    --lake:     #1ca9c9;   /* lake teal */
-    --deep:     #0b4f6c;   /* deep water */
-    --cream:    #fff7ec;
-    --ink:      #15202b;
-    --shadow:   0 10px 30px rgba(11,79,108,.18);
-    --radius:   22px;
+    --sunset:#ff6b35; --coral:#ff3e6c; --gold:#ffc857;
+    --lake:#1ca9c9;   --deep:#0b4f6c;  --cream:#fff7ec;
+    --ink:#15202b;
+    --shadow:0 18px 45px rgba(11,79,108,.22);
+    --radius:24px;
+
+    /* ===================== PHOTO SLOTS =====================
+       Wired to the photos Ty added. Filenames keep their spaces
+       (URL-encoded as %20). Swap these to add/replace photos. */
+    --hero-img:   none;
+    --scene1-img: url('House%20photo%201.png');
+    --scene2-img: url('House%20photo%202.png');
+    --scene3-img: url('House%20photo%203.png');
   }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  html { scroll-behavior: smooth; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html { scroll-behavior:smooth; }
 
   body {
-    font-family: "Trebuchet MS", "Segoe UI", system-ui, sans-serif;
-    color: var(--ink);
-    line-height: 1.6;
-    /* EASTER-EGG BACKGROUND:
-       This is a layered, summery gradient used as a placeholder.
-       To use your own cropped teaser photos, replace the gradients
-       below with: url('photo1.jpg'), url('photo2.jpg') etc.
-       Keep them cropped/zoomed so the house stays a surprise! */
-    background:
-      radial-gradient(circle at 12% 18%, rgba(255,200,87,.35), transparent 30%),
-      radial-gradient(circle at 85% 12%, rgba(255,62,108,.30), transparent 32%),
-      radial-gradient(circle at 78% 82%, rgba(28,169,201,.40), transparent 38%),
-      radial-gradient(circle at 18% 88%, rgba(255,107,53,.30), transparent 34%),
-      linear-gradient(160deg, #aee9f5 0%, #d8f3f8 40%, #fff7ec 100%);
-    background-attachment: fixed;
-    min-height: 100vh;
+    font-family:"Poppins", system-ui, sans-serif;
+    color:var(--ink);
+    line-height:1.6;
+    background:linear-gradient(180deg,#dff4fb 0%, #eafaff 35%, #fff7ec 100%);
+    overflow-x:hidden;
   }
 
-  .wrap { max-width: 900px; margin: 0 auto; padding: 20px 18px 70px; }
-
-  section {
-    background: rgba(255,255,255,.86);
-    backdrop-filter: blur(4px);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    padding: 30px 26px;
-    margin: 22px 0;
+  /* ---------- sticky mini countdown bar ---------- */
+  .topbar {
+    position:fixed; top:0; left:0; right:0; z-index:50;
+    display:flex; align-items:center; justify-content:center; gap:10px;
+    padding:10px 16px;
+    background:linear-gradient(120deg, var(--deep), var(--lake));
+    color:#fff; font-weight:600; font-size:.95rem;
+    box-shadow:0 6px 20px rgba(11,79,108,.3);
+    transform:translateY(-110%); transition:transform .45s ease;
   }
+  .topbar.show { transform:translateY(0); }
+  .topbar b { color:var(--gold); }
 
-  h2 {
-    font-size: clamp(1.5rem, 4vw, 2.1rem);
-    color: var(--deep);
-    margin-bottom: 14px;
-    display: flex; align-items: center; gap: 10px;
+  /* ---------- generic full-bleed scene (parallax) ---------- */
+  .scene {
+    position:relative;
+    min-height:80vh;
+    display:flex; align-items:center; justify-content:center;
+    text-align:center; color:#fff;
+    padding:60px 22px;
+    background-size:cover, cover, cover;
+    background-position:center;
+    background-repeat:no-repeat;
+    background-attachment:fixed, fixed, fixed;
+  }
+  .scene .scene-cap {
+    max-width:680px;
+    font-family:"Pacifico", cursive;
+    font-size:clamp(1.6rem, 5vw, 3rem);
+    line-height:1.25;
+    text-shadow:0 6px 24px rgba(0,0,0,.45);
+  }
+  .scene .scene-sub {
+    margin-top:10px; font-weight:500;
+    font-size:clamp(.95rem, 2.6vw, 1.15rem);
+    text-shadow:0 2px 10px rgba(0,0,0,.5);
   }
 
   /* ---------- HERO ---------- */
   .hero {
-    text-align: center;
-    color: #fff;
-    border-radius: var(--radius);
-    margin-top: 24px;
-    padding: 54px 24px;
-    position: relative;
-    overflow: hidden;
-    /* EASTER-EGG HERO IMAGE: swap the gradient for a cropped lake photo:
-       background: linear-gradient(rgba(11,79,108,.45),rgba(255,62,108,.45)), url('hero.jpg') center/cover; */
-    background:
-      linear-gradient(135deg, rgba(255,107,53,.92), rgba(255,62,108,.86) 45%, rgba(28,169,201,.92));
-    box-shadow: var(--shadow);
+    min-height:100vh;
+    background-image:
+      linear-gradient(180deg, rgba(11,79,108,.30), rgba(255,62,108,.30) 60%, rgba(11,79,108,.55)),
+      var(--hero-img),
+      linear-gradient(155deg, #ff6b35 0%, #ff3e6c 42%, #1ca9c9 100%);
+    flex-direction:column;
   }
+  .hero .emoji-row { font-size:2rem; letter-spacing:8px; margin-bottom:8px;
+    animation:bob 4s ease-in-out infinite; }
   .hero h1 {
-    font-size: clamp(2.3rem, 8vw, 4rem);
-    line-height: 1.05;
-    text-shadow: 0 4px 16px rgba(0,0,0,.25);
-    letter-spacing: .5px;
+    font-family:"Pacifico", cursive;
+    font-weight:400;
+    font-size:clamp(2.8rem, 10vw, 5.5rem);
+    line-height:1.05;
+    text-shadow:0 6px 26px rgba(0,0,0,.4);
   }
   .hero .sub {
-    margin-top: 12px;
-    font-size: clamp(1rem, 3vw, 1.3rem);
-    font-weight: bold;
-    text-shadow: 0 2px 8px rgba(0,0,0,.25);
+    margin-top:14px; font-weight:600;
+    font-size:clamp(1.05rem, 3vw, 1.5rem);
+    text-shadow:0 2px 12px rgba(0,0,0,.45);
   }
   .hero .dates {
-    display:inline-block;
-    margin-top: 18px;
-    background: rgba(255,255,255,.22);
-    border: 2px solid rgba(255,255,255,.6);
-    padding: 8px 18px;
-    border-radius: 999px;
-    font-weight: bold;
+    display:inline-block; margin-top:22px;
+    background:rgba(255,255,255,.18); border:2px solid rgba(255,255,255,.7);
+    backdrop-filter:blur(3px);
+    padding:10px 22px; border-radius:999px; font-weight:600;
+    box-shadow:0 8px 24px rgba(0,0,0,.2);
   }
-  .emoji-row { font-size: 1.8rem; margin-bottom: 6px; letter-spacing: 6px; }
+  .scroll-cue {
+    position:absolute; bottom:26px; left:50%; transform:translateX(-50%);
+    color:#fff; font-size:.8rem; letter-spacing:2px; text-transform:uppercase;
+    opacity:.9;
+  }
+  .scroll-cue .arrow { display:block; font-size:1.4rem; animation:bob 1.8s infinite; }
 
-  /* ---------- COUNTDOWN ---------- */
-  .count-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
-    margin-top: 8px;
+  /* drifting clouds */
+  .cloud { position:absolute; top:0; left:0; width:100%; height:100%;
+    pointer-events:none; overflow:hidden; }
+  .cloud span {
+    position:absolute; font-size:3rem; opacity:.55;
+    animation:drift linear infinite;
   }
+  .cloud span:nth-child(1){ top:14%; animation-duration:46s; }
+  .cloud span:nth-child(2){ top:30%; font-size:2rem; opacity:.4; animation-duration:64s; animation-delay:-12s; }
+  .cloud span:nth-child(3){ top:8%;  font-size:2.4rem; opacity:.5; animation-duration:80s; animation-delay:-30s; }
+
+  @keyframes drift { from{ transform:translateX(-20vw);} to{ transform:translateX(120vw);} }
+  @keyframes bob   { 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(-8px);} }
+
+  /* ---------- wave divider ---------- */
+  .wave { display:block; width:100%; height:70px; margin-bottom:-6px; }
+  .wave.flip { transform:rotate(180deg); }
+
+  /* ---------- content blocks ---------- */
+  .band { background:linear-gradient(180deg,#eafaff, #fff7ec); padding:10px 0 30px; }
+  .wrap { max-width:920px; margin:0 auto; padding:14px 18px; }
+
+  section.card {
+    background:rgba(255,255,255,.9);
+    backdrop-filter:blur(6px);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    padding:34px 28px; margin:26px 0;
+    opacity:0; transform:translateY(34px);
+    transition:opacity .7s ease, transform .7s ease;
+  }
+  section.card.visible { opacity:1; transform:none; }
+
+  h2 {
+    font-size:clamp(1.5rem, 4vw, 2.2rem);
+    color:var(--deep); margin-bottom:16px;
+    display:flex; align-items:center; gap:10px;
+  }
+
+  /* ---------- countdown ---------- */
+  .count-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-top:8px; }
   .count-box {
-    background: linear-gradient(160deg, var(--lake), var(--deep));
-    color: #fff;
-    border-radius: 16px;
-    padding: 18px 6px;
-    text-align: center;
+    background:linear-gradient(160deg, var(--lake), var(--deep));
+    color:#fff; border-radius:18px; padding:20px 6px; text-align:center;
+    box-shadow:0 10px 26px rgba(11,79,108,.25);
   }
-  .count-box .num { font-size: clamp(1.6rem, 7vw, 2.6rem); font-weight: bold; line-height:1; }
-  .count-box .lbl { font-size: .75rem; text-transform: uppercase; letter-spacing: 1px; opacity: .9; margin-top:6px; }
-  .count-note { text-align:center; margin-top:14px; font-weight:bold; color: var(--sunset); }
+  .count-box .num { font-size:clamp(1.7rem, 7vw, 2.8rem); font-weight:700; line-height:1; }
+  .count-box .lbl { font-size:.72rem; text-transform:uppercase; letter-spacing:1px; opacity:.9; margin-top:6px; }
+  .count-note { text-align:center; margin-top:16px; font-weight:600; color:var(--sunset); }
 
-  /* ---------- CELEBRATIONS ---------- */
+  /* ---------- celebrations ---------- */
   .party-banner {
-    background: linear-gradient(120deg, var(--gold), var(--coral));
-    color: #fff;
-    text-align:center;
-    padding: 24px;
-    border-radius: 16px;
-    font-size: clamp(1.05rem, 3.2vw, 1.3rem);
-    font-weight: bold;
-    text-shadow: 0 2px 6px rgba(0,0,0,.2);
+    background:linear-gradient(120deg, var(--gold), var(--coral));
+    color:#fff; text-align:center; padding:24px; border-radius:18px;
+    font-size:clamp(1.05rem,3.2vw,1.3rem); font-weight:600;
+    text-shadow:0 2px 6px rgba(0,0,0,.2);
   }
   .cake-list { list-style:none; margin-top:16px; display:grid; gap:10px; }
   .cake-list li {
-    background: var(--cream);
-    border-left: 6px solid var(--coral);
-    padding: 12px 16px;
-    border-radius: 10px;
-    font-weight: bold;
+    background:var(--cream); border-left:6px solid var(--coral);
+    padding:13px 16px; border-radius:12px; font-weight:600;
+    transition:transform .2s ease;
   }
+  .cake-list li:hover { transform:translateX(6px); }
 
-  /* ---------- WEATHER ---------- */
-  #weather-now {
-    display:flex; align-items:center; gap:18px; flex-wrap:wrap;
-    background: linear-gradient(160deg, #eafaff, #fff);
-    border-radius: 16px; padding: 18px 20px;
+  /* ---------- teaser polaroids ---------- */
+  .teaser-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:18px; margin-top:8px; }
+  .polaroid {
+    background:#fff; padding:10px 10px 16px; border-radius:6px;
+    box-shadow:0 12px 26px rgba(11,79,108,.2);
+    transform:rotate(var(--tilt,-2deg)); transition:transform .25s ease;
   }
-  #weather-now .temp { font-size: 3rem; font-weight:bold; color: var(--deep); }
-  #weather-now .ico { font-size: 3rem; }
-  .forecast { display:grid; grid-template-columns: repeat(auto-fit,minmax(90px,1fr)); gap:10px; margin-top:16px; }
-  .fc-day { background: var(--cream); border-radius:12px; padding:12px 6px; text-align:center; }
-  .fc-day .d { font-weight:bold; color: var(--deep); font-size:.85rem; }
+  .polaroid:hover { transform:rotate(0) scale(1.04); }
+  .polaroid .pic {
+    height:130px; border-radius:4px;
+    background-size:cover, cover; background-position:center;
+    display:flex; align-items:center; justify-content:center;
+    font-size:2.4rem; color:#fff; text-shadow:0 2px 8px rgba(0,0,0,.4);
+  }
+  .polaroid .cap { text-align:center; margin-top:10px; font-weight:600; font-size:.85rem; color:var(--deep); }
+  .teaser-note { text-align:center; margin-top:18px; font-weight:600; color:var(--coral); }
+
+  /* ---------- weather ---------- */
+  #weather-now { display:flex; align-items:center; gap:18px; flex-wrap:wrap;
+    background:linear-gradient(160deg,#eafaff,#fff); border-radius:18px; padding:20px; }
+  #weather-now .temp { font-size:3rem; font-weight:700; color:var(--deep); }
+  #weather-now .ico { font-size:3rem; }
+  .forecast { display:grid; grid-template-columns:repeat(auto-fit,minmax(90px,1fr)); gap:10px; margin-top:16px; }
+  .fc-day { background:var(--cream); border-radius:14px; padding:12px 6px; text-align:center; }
+  .fc-day .d { font-weight:700; color:var(--deep); font-size:.85rem; }
   .fc-day .i { font-size:1.6rem; margin:4px 0; }
   .fc-day .t { font-size:.85rem; }
-  .typical {
-    margin-top: 16px; background: var(--cream); border-radius: 12px; padding: 14px 16px;
-    border-left: 6px solid var(--gold);
-  }
+  .typical { margin-top:16px; background:var(--cream); border-radius:14px; padding:14px 16px;
+    border-left:6px solid var(--gold); }
 
-  /* ---------- GUESTS ---------- */
-  .guest-grid { display:grid; gap:14px; grid-template-columns: repeat(auto-fit, minmax(250px,1fr)); }
-  .guest-card {
-    background: var(--cream);
-    border-radius: 16px;
-    padding: 16px 18px;
-    border-top: 6px solid var(--lake);
-  }
-  .guest-card.host    { border-top-color: var(--sunset); }
-  .guest-card.tbd     { border-top-color: var(--gold); opacity:.96; }
-  .guest-card h3 { color: var(--deep); font-size:1.1rem; margin-bottom:4px; }
-  .guest-card .when { font-weight:bold; color: var(--coral); font-size:.9rem; }
+  /* ---------- guests ---------- */
+  .guest-grid { display:grid; gap:14px; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); }
+  .guest-card { background:var(--cream); border-radius:18px; padding:16px 18px;
+    border-top:6px solid var(--lake); transition:transform .2s ease, box-shadow .2s ease; }
+  .guest-card:hover { transform:translateY(-5px); box-shadow:0 14px 28px rgba(11,79,108,.18); }
+  .guest-card.host { border-top-color:var(--sunset); }
+  .guest-card.tbd  { border-top-color:var(--gold); }
+  .guest-card h3 { color:var(--deep); font-size:1.1rem; margin-bottom:4px; }
+  .guest-card .when { font-weight:700; color:var(--coral); font-size:.9rem; }
   .guest-card .note { font-size:.9rem; margin-top:6px; }
-  .travel {
-    margin-top:10px; background:#fff; border-radius:10px; padding:10px 12px; font-size:.85rem;
-    border:1px dashed var(--lake);
-  }
-  .travel b { color: var(--deep); }
-  .pill { display:inline-block; background:var(--gold); color:var(--ink); font-size:.7rem; font-weight:bold;
+  .travel { margin-top:10px; background:#fff; border-radius:12px; padding:10px 12px; font-size:.85rem;
+    border:1px dashed var(--lake); }
+  .travel b { color:var(--deep); }
+  .pill { display:inline-block; background:var(--gold); color:var(--ink); font-size:.7rem; font-weight:700;
     padding:2px 9px; border-radius:999px; margin-left:6px; vertical-align:middle; }
 
-  /* ---------- LOGISTICS ---------- */
-  .info-grid { display:grid; gap:14px; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); }
-  .info-card { background: var(--cream); border-radius:14px; padding:16px; }
-  .info-card h3 { color: var(--deep); font-size:1rem; margin-bottom:6px; }
+  /* ---------- logistics ---------- */
+  .info-grid { display:grid; gap:14px; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); }
+  .info-card { background:var(--cream); border-radius:16px; padding:16px;
+    transition:transform .2s ease; }
+  .info-card:hover { transform:translateY(-4px); }
+  .info-card h3 { color:var(--deep); font-size:1rem; margin-bottom:6px; }
   .info-card p { font-size:.9rem; }
+  .surprise-chip { display:inline-block; background:linear-gradient(120deg,var(--sunset),var(--coral));
+    color:#fff; padding:8px 16px; border-radius:999px; font-weight:600; font-size:.85rem; margin-top:8px;
+    box-shadow:0 8px 20px rgba(255,62,108,.3); }
 
-  .teaser-link {
-    display:inline-block; margin-top:8px; color:#fff; background:var(--sunset);
-    padding:10px 18px; border-radius:999px; text-decoration:none; font-weight:bold;
-    box-shadow: var(--shadow);
+  footer { text-align:center; color:var(--deep); font-size:.85rem; padding:24px 10px; opacity:.85; }
+
+  @media (max-width:760px) {
+    /* fixed backgrounds get janky on mobile -> let them scroll */
+    .scene, .hero { background-attachment:scroll, scroll, scroll; }
   }
-  .teaser-link:hover { background: var(--coral); }
-
-  footer { text-align:center; color: var(--deep); font-size:.85rem; padding: 10px; opacity:.8; }
-
-  @media (max-width: 480px) {
-    section { padding: 22px 16px; }
-    .count-grid { gap: 8px; }
+  @media (max-width:480px) {
+    section.card { padding:24px 16px; }
+    .count-grid { gap:8px; }
   }
 </style>
 </head>
 <body>
-<div class="wrap">
 
-  <!-- ============ HERO ============ -->
-  <header class="hero">
-    <div class="emoji-row">🌊 ☀️ 🛥️ 🎉 🍉</div>
-    <h1>Summer Lake House Bash</h1>
-    <div class="sub">A secret spot on beautiful Lake Norman, North Carolina</div>
-    <div class="dates">Mon, July 20 &ndash; Fri, July 24, 2026</div>
-  </header>
+<!-- ===== sticky mini countdown ===== -->
+<div class="topbar" id="topbar">🌊 <span><b id="tb-days">--</b> days until lake time!</span></div>
 
-  <!-- ============ COUNTDOWN ============ -->
-  <section>
-    <h2>⏳ Countdown to Lake Time</h2>
-    <div class="count-grid">
-      <div class="count-box"><div class="num" id="cd-days">--</div><div class="lbl">Days</div></div>
-      <div class="count-box"><div class="num" id="cd-hours">--</div><div class="lbl">Hours</div></div>
-      <div class="count-box"><div class="num" id="cd-mins">--</div><div class="lbl">Minutes</div></div>
-      <div class="count-box"><div class="num" id="cd-secs">--</div><div class="lbl">Seconds</div></div>
-    </div>
-    <div class="count-note" id="cd-note">until we hit the water!</div>
-  </section>
+<!-- ============ HERO ============ -->
+<header class="scene hero">
+  <div class="cloud"><span>☁️</span><span>☁️</span><span>☁️</span></div>
+  <div class="emoji-row">🌊 ☀️ 🛥️ 🎉 🍉</div>
+  <h1>Summer Lake House Bash</h1>
+  <div class="sub">A secret spot on beautiful Lake Norman, North Carolina</div>
+  <div class="dates">Mon, July 20 &ndash; Fri, July 24, 2026</div>
+  <div class="scroll-cue">scroll<span class="arrow">⌄</span></div>
+</header>
 
-  <!-- ============ CELEBRATIONS ============ -->
-  <section>
-    <h2>🎂 A Triple Birthday Bash</h2>
-    <div class="party-banner">
-      This whole trip is one big celebration! 🥳
-    </div>
-    <ul class="cake-list">
-      <!-- EDIT ME: birthday people -->
-      <li>🎈 Ty turns the BIG 4-0 &mdash; the reason we're all here!</li>
-      <li>🎈 It's birthday week for Mimi (the lake-house birthday girl)!</li>
-      <li>🎈 And birthday week for my brother too &mdash; fingers crossed he can join!</li>
-    </ul>
-  </section>
+<svg class="wave" viewBox="0 0 1440 70" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+  <path fill="#eafaff" d="M0,32 C240,72 480,0 720,24 C960,48 1200,72 1440,36 L1440,70 L0,70 Z"></path>
+</svg>
 
-  <!-- ============ WEATHER ============ -->
-  <section>
-    <h2>🌤️ Lake Norman Weather</h2>
-    <div id="weather-now">
-      <div class="ico" id="w-ico">⛅</div>
-      <div>
-        <div class="temp" id="w-temp">Loading…</div>
-        <div id="w-desc">Fetching the latest forecast…</div>
+<div class="band">
+  <div class="wrap">
+
+    <!-- ============ COUNTDOWN ============ -->
+    <section class="card">
+      <h2>⏳ Countdown to Lake Time</h2>
+      <div class="count-grid">
+        <div class="count-box"><div class="num" id="cd-days">--</div><div class="lbl">Days</div></div>
+        <div class="count-box"><div class="num" id="cd-hours">--</div><div class="lbl">Hours</div></div>
+        <div class="count-box"><div class="num" id="cd-mins">--</div><div class="lbl">Minutes</div></div>
+        <div class="count-box"><div class="num" id="cd-secs">--</div><div class="lbl">Seconds</div></div>
       </div>
-    </div>
-    <div class="forecast" id="forecast"></div>
-    <div class="typical">
-      <b>What to expect in late July:</b> Hot and summery! Highs around <b>91&deg;F</b>,
-      lows near <b>70&deg;F</b>, and humid (about 64%). Warm, a little sticky, with a small
-      chance of afternoon storms. Pack swimsuits, sunscreen, hats, and water shoes. ☀️🩴
-    </div>
-  </section>
+      <div class="count-note" id="cd-note">until we hit the water!</div>
+    </section>
 
-  <!-- ============ GUESTS + TRAVEL ============ -->
-  <section>
-    <h2>👨‍👩‍👧‍👦 Who's Coming</h2>
-    <div class="guest-grid">
-
-      <!-- EDIT ME: guest cards -->
-      <div class="guest-card host">
-        <h3>Ty &amp; Chelsie</h3>
-        <span class="when">Mon Jul 20 &ndash; Fri Jul 24</span>
-        <div class="note">Your hosts! 🏡 (And the birthday boy 🎉)</div>
-      </div>
-
-      <div class="guest-card host">
-        <h3>Hunter &amp; Mia</h3>
-        <span class="when">Mon Jul 20 &ndash; Fri Jul 24</span>
-        <div class="note">The kids! Hunter just wrapped 8th grade and is off to high school 🎓.
-        Each of them will invite a friend for a few days. <span class="pill">friends: TBD</span></div>
-      </div>
-
-      <div class="guest-card">
-        <h3>Noah &amp; Mimi</h3>
-        <span class="when">Arrive Tue Jul 21</span>
-        <div class="note">My sister &amp; her husband. Staying with us / nearby Friday night, then flying out Saturday.</div>
-        <div class="travel">
-          <b>✈️ Arrive Tue, Jul 21</b><br>
-          AA5562 nonstop BTV → CLT<br>
-          7:56 AM → 10:25 AM<br><br>
-          <b>✈️ Depart Sat, Jul 25</b><br>
-          AA5093 nonstop CLT → BTV<br>
-          11:26 AM → 1:51 PM
-        </div>
-      </div>
-
-      <div class="guest-card tbd">
-        <h3>Annette (Nana)</h3>
-        <span class="when">Dates TBD</span>
-        <div class="note">My mom 💛</div>
-      </div>
-
-      <div class="guest-card tbd">
-        <h3>Kay &amp; Bruce</h3>
-        <span class="when">Dates TBD</span>
-        <div class="note">My aunt &amp; her husband.</div>
-      </div>
-
-      <div class="guest-card tbd">
-        <h3>My Brother</h3>
-        <span class="when">Hopefully! 🤞</span>
-        <div class="note">It's his birthday week too &mdash; still confirming if he can make it.</div>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- ============ LOGISTICS ============ -->
-  <section>
-    <h2>📋 Good to Know</h2>
-    <div class="info-grid">
-      <!-- EDIT ME: fill these in when ready -->
-      <div class="info-card">
-        <h3>📍 Where</h3>
-        <p>On beautiful Lake Norman, NC. Exact spot is a <b>surprise</b>! About 1 hr 20 min from our
-        house and roughly 45 min from Charlotte airport (CLT).</p>
-        <a class="teaser-link" href="https://www.staylakenorman.com/rentals/shoreline-on-stonemarker/" target="_blank" rel="noopener">A little sneak peek… 👀</a>
-      </div>
-      <div class="info-card">
-        <h3>🛎️ Check-in / out</h3>
-        <p>Check-in: Mon, Jul 20.<br>Check-out: Fri, Jul 24.<br><em>Times: TBD</em></p>
-      </div>
-      <div class="info-card">
-        <h3>📶 WiFi</h3>
-        <p><em>Network &amp; password: TBD &mdash; will share closer to the trip.</em></p>
-      </div>
-      <div class="info-card">
-        <h3>🚗 Parking</h3>
-        <p><em>Details TBD.</em></p>
-      </div>
-      <div class="info-card">
-        <h3>🧳 What to Pack</h3>
-        <p>Swimsuits, towels, sunscreen, hats, water shoes, sunglasses, and a light layer for evenings.</p>
-      </div>
-      <div class="info-card">
-        <h3>🍽️ Nearby</h3>
-        <p><em>Grocery, restaurants &amp; activities: TBD.</em></p>
-      </div>
-    </div>
-  </section>
-
-  <footer>
-    Made with ☀️ for the Summer Lake House Bash &middot; July 2026
-  </footer>
-
+  </div>
 </div>
 
+<!-- ============ SCENE 1 ============ -->
+<section class="scene scene1">
+  <div class="scene-cap">Sun's out, phones down, toes in the water.
+    <div class="scene-sub">Five days of pure lake life are coming…</div>
+  </div>
+</section>
+
+<div class="band">
+  <div class="wrap">
+
+    <!-- ============ CELEBRATIONS ============ -->
+    <section class="card">
+      <h2>🎂 A Triple Birthday Bash</h2>
+      <div class="party-banner">This whole trip is one big celebration! 🥳</div>
+      <ul class="cake-list">
+        <li>🎈 Ty turns the BIG 4-0 &mdash; the reason we're all here!</li>
+        <li>🎈 It's birthday week for Mimi (the lake-house birthday girl)!</li>
+        <li>🎈 And birthday week for my brother too &mdash; fingers crossed he can join!</li>
+      </ul>
+    </section>
+
+    <!-- ============ TEASERS ============ -->
+    <section class="card">
+      <h2>👀 Little Peeks (No Spoilers!)</h2>
+      <div class="teaser-grid">
+        <div class="polaroid" style="--tilt:-3deg">
+          <div class="pic" id="t1">🌅</div>
+          <div class="cap">Mornings like this</div>
+        </div>
+        <div class="polaroid" style="--tilt:2deg">
+          <div class="pic" id="t2">🛶</div>
+          <div class="cap">Out on the water</div>
+        </div>
+        <div class="polaroid" style="--tilt:-2deg">
+          <div class="pic" id="t3">🔥</div>
+          <div class="cap">Evenings by the fire</div>
+        </div>
+        <div class="polaroid" style="--tilt:3deg">
+          <div class="pic" id="t4">🍉</div>
+          <div class="cap">…and a lot of these</div>
+        </div>
+      </div>
+      <div class="teaser-note">The exact spot stays a secret until you arrive. 🤫</div>
+    </section>
+
+  </div>
+</div>
+
+<!-- ============ SCENE 2 ============ -->
+<section class="scene scene2">
+  <div class="scene-cap">Dock days &amp; cannonball contests.
+    <div class="scene-sub">Bring your competitive spirit (and a towel).</div>
+  </div>
+</section>
+
+<div class="band">
+  <div class="wrap">
+
+    <!-- ============ WEATHER ============ -->
+    <section class="card">
+      <h2>🌤️ Lake Norman Weather</h2>
+      <div id="weather-now">
+        <div class="ico" id="w-ico">⛅</div>
+        <div>
+          <div class="temp" id="w-temp">Loading…</div>
+          <div id="w-desc">Fetching the latest forecast…</div>
+        </div>
+      </div>
+      <div class="forecast" id="forecast"></div>
+      <div class="typical">
+        <b>What to expect in late July:</b> Hot and summery! Highs around <b>91&deg;F</b>,
+        lows near <b>70&deg;F</b>, and humid (about 64%). Warm, a little sticky, with a small
+        chance of afternoon storms. Pack swimsuits, sunscreen, hats, and water shoes. ☀️🩴
+      </div>
+    </section>
+
+    <!-- ============ GUESTS ============ -->
+    <section class="card">
+      <h2>👨‍👩‍👧‍👦 Who's Coming</h2>
+      <div class="guest-grid">
+        <div class="guest-card host">
+          <h3>Ty &amp; Chelsie</h3>
+          <span class="when">Mon Jul 20 &ndash; Fri Jul 24</span>
+          <div class="note">Your hosts! 🏡 (And the birthday boy 🎉)</div>
+        </div>
+        <div class="guest-card host">
+          <h3>Hunter &amp; Mia</h3>
+          <span class="when">Mon Jul 20 &ndash; Fri Jul 24</span>
+          <div class="note">The kids! Hunter just wrapped 8th grade and is off to high school 🎓.
+          Each of them will invite a friend for a few days. <span class="pill">friends: TBD</span></div>
+        </div>
+        <div class="guest-card">
+          <h3>Noah &amp; Mimi</h3>
+          <span class="when">Arrive Tue Jul 21</span>
+          <div class="note">My sister &amp; her husband. Staying with us / nearby Friday night, then flying out Saturday.</div>
+          <div class="travel">
+            <b>✈️ Arrive Tue, Jul 21</b><br>
+            AA5562 nonstop BTV → CLT<br>7:56 AM → 10:25 AM<br><br>
+            <b>✈️ Depart Sat, Jul 25</b><br>
+            AA5093 nonstop CLT → BTV<br>11:26 AM → 1:51 PM
+          </div>
+        </div>
+        <div class="guest-card tbd">
+          <h3>Annette (Nana)</h3>
+          <span class="when">Dates TBD</span>
+          <div class="note">My mom 💛</div>
+        </div>
+        <div class="guest-card tbd">
+          <h3>Kay &amp; Bruce</h3>
+          <span class="when">Dates TBD</span>
+          <div class="note">My aunt &amp; her husband.</div>
+        </div>
+        <div class="guest-card tbd">
+          <h3>My Brother</h3>
+          <span class="when">Hopefully! 🤞</span>
+          <div class="note">It's his birthday week too &mdash; still confirming if he can make it.</div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<!-- ============ SCENE 3 ============ -->
+<section class="scene scene3">
+  <div class="scene-cap">Rainy day? No problem.
+    <div class="scene-sub">Foosball rivalries and arcade high-scores await. 🎮</div>
+  </div>
+</section>
+
+<div class="band">
+  <div class="wrap">
+
+    <!-- ============ LOGISTICS ============ -->
+    <section class="card">
+      <h2>📋 Good to Know</h2>
+      <div class="info-grid">
+        <div class="info-card">
+          <h3>📍 Where</h3>
+          <p>On beautiful Lake Norman, NC. About 1 hr 20 min from our house and roughly
+          45 min from Charlotte airport (CLT).</p>
+          <span class="surprise-chip">Exact spot = a surprise 🤫</span>
+        </div>
+        <div class="info-card">
+          <h3>🛎️ Check-in / out</h3>
+          <p>Check-in: Mon, Jul 20.<br>Check-out: Fri, Jul 24.<br><em>Times: TBD</em></p>
+        </div>
+        <div class="info-card">
+          <h3>📶 WiFi</h3>
+          <p><em>Network &amp; password: TBD &mdash; will share closer to the trip.</em></p>
+        </div>
+        <div class="info-card">
+          <h3>🚗 Parking</h3>
+          <p><em>Details TBD.</em></p>
+        </div>
+        <div class="info-card">
+          <h3>🧳 What to Pack</h3>
+          <p>Swimsuits, towels, sunscreen, hats, water shoes, sunglasses, and a light layer for evenings.</p>
+        </div>
+        <div class="info-card">
+          <h3>🍽️ Nearby</h3>
+          <p><em>Grocery, restaurants &amp; activities: TBD.</em></p>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<footer>Made with ☀️ for the Summer Lake House Bash &middot; July 2026</footer>
+
 <script>
+  /* ---------- apply photo slots (with graceful fallbacks) ----------
+     We layer: dark overlay  >  your photo  >  fallback gradient.
+     If the photo file is missing, the gradient simply shows instead. */
+  var styles = getComputedStyle(document.documentElement);
+  function imgVar(name){ return styles.getPropertyValue(name).trim(); }
+
+  var scenes = [
+    { sel:'.scene1', img:imgVar('--scene1-img'),
+      grad:'linear-gradient(135deg,#ffc857,#ff6b35 55%,#ff3e6c)' },
+    { sel:'.scene2', img:imgVar('--scene2-img'),
+      grad:'linear-gradient(135deg,#1ca9c9,#0b4f6c)' },
+    { sel:'.scene3', img:imgVar('--scene3-img'),
+      grad:'linear-gradient(135deg,#ff6b35,#ff3e6c 50%,#0b4f6c)' }
+  ];
+  scenes.forEach(function(s){
+    var el = document.querySelector(s.sel); if(!el) return;
+    el.style.backgroundImage =
+      'linear-gradient(rgba(11,79,108,.32),rgba(11,79,108,.5)), ' + s.img + ', ' + s.grad;
+  });
+
+  /* polaroid teaser photos (fallback = the emoji already in the box) */
+  var teasers = [
+    {id:'t1', img:"url('teaser1.jpg')", grad:'linear-gradient(135deg,#ffc857,#ff6b35)'},
+    {id:'t2', img:"url('teaser2.jpg')", grad:'linear-gradient(135deg,#1ca9c9,#0b4f6c)'},
+    {id:'t3', img:"url('teaser3.jpg')", grad:'linear-gradient(135deg,#ff6b35,#ff3e6c)'},
+    {id:'t4', img:"url('teaser4.jpg')", grad:'linear-gradient(135deg,#ff3e6c,#1ca9c9)'}
+  ];
+  teasers.forEach(function(t){
+    var el = document.getElementById(t.id); if(!el) return;
+    el.style.backgroundImage = t.img + ', ' + t.grad;
+    /* hide the emoji once a real photo loads */
+    var probe = new Image();
+    probe.onload = function(){ el.textContent = ''; };
+    probe.src = t.img.replace(/^url\('?|'?\)$/g,'');
+  });
+
+  /* ---------- scroll reveal ---------- */
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('visible'); io.unobserve(e.target); } });
+  }, { threshold:.12 });
+  document.querySelectorAll('section.card').forEach(function(c){ io.observe(c); });
+
+  /* ---------- sticky top bar after hero ---------- */
+  var topbar = document.getElementById('topbar');
+  window.addEventListener('scroll', function(){
+    if (window.scrollY > window.innerHeight * 0.85) topbar.classList.add('show');
+    else topbar.classList.remove('show');
+  });
+
   /* ---------- COUNTDOWN ---------- */
-  // EDIT ME: target check-in date/time (local). Months are 0-indexed: 6 = July.
-  var target = new Date(2026, 6, 20, 16, 0, 0); // July 20, 2026, 4:00 PM (typical check-in)
-
+  var target = new Date(2026, 6, 20, 16, 0, 0); // July 20, 2026, 4:00 PM
   function tick() {
-    var now = new Date();
-    var diff = target - now;
-    var note = document.getElementById('cd-note');
-
+    var now = new Date(), diff = target - now, note = document.getElementById('cd-note');
     if (diff <= 0) {
-      document.getElementById('cd-days').textContent = 0;
-      document.getElementById('cd-hours').textContent = 0;
-      document.getElementById('cd-mins').textContent = 0;
-      document.getElementById('cd-secs').textContent = 0;
+      ['cd-days','cd-hours','cd-mins','cd-secs'].forEach(function(id){ document.getElementById(id).textContent = 0; });
+      document.getElementById('tb-days').textContent = 0;
       note.textContent = "🎉 It's lake time! Welcome to the bash! 🎉";
       return;
     }
-    var d = Math.floor(diff / 86400000);
-    var h = Math.floor(diff % 86400000 / 3600000);
-    var m = Math.floor(diff % 3600000 / 60000);
-    var s = Math.floor(diff % 60000 / 1000);
-    document.getElementById('cd-days').textContent  = d;
-    document.getElementById('cd-hours').textContent = h;
-    document.getElementById('cd-mins').textContent  = m;
-    document.getElementById('cd-secs').textContent  = s;
+    var d=Math.floor(diff/86400000), h=Math.floor(diff%86400000/3600000),
+        m=Math.floor(diff%3600000/60000), s=Math.floor(diff%60000/1000);
+    document.getElementById('cd-days').textContent=d;
+    document.getElementById('cd-hours').textContent=h;
+    document.getElementById('cd-mins').textContent=m;
+    document.getElementById('cd-secs').textContent=s;
+    document.getElementById('tb-days').textContent=d;
   }
-  tick();
-  setInterval(tick, 1000);
+  tick(); setInterval(tick, 1000);
 
   /* ---------- WEATHER (Open-Meteo, free, no key) ---------- */
-  // Coordinates: Lake Norman / Mooresville, NC area (not the exact house).
-  var LAT = 35.585, LON = -80.810;
-  var WMO = {
-    0:['☀️','Clear sky'],1:['🌤️','Mostly clear'],2:['⛅','Partly cloudy'],3:['☁️','Overcast'],
+  var LAT=35.585, LON=-80.810;
+  var WMO={0:['☀️','Clear sky'],1:['🌤️','Mostly clear'],2:['⛅','Partly cloudy'],3:['☁️','Overcast'],
     45:['🌫️','Fog'],48:['🌫️','Fog'],51:['🌦️','Light drizzle'],53:['🌦️','Drizzle'],55:['🌧️','Drizzle'],
-    61:['🌦️','Light rain'],63:['🌧️','Rain'],65:['🌧️','Heavy rain'],
-    71:['🌨️','Snow'],73:['🌨️','Snow'],75:['❄️','Heavy snow'],
-    80:['🌦️','Showers'],81:['🌧️','Showers'],82:['⛈️','Heavy showers'],
-    95:['⛈️','Thunderstorm'],96:['⛈️','Thunderstorm'],99:['⛈️','Severe storm']
-  };
+    61:['🌦️','Light rain'],63:['🌧️','Rain'],65:['🌧️','Heavy rain'],71:['🌨️','Snow'],73:['🌨️','Snow'],
+    75:['❄️','Heavy snow'],80:['🌦️','Showers'],81:['🌧️','Showers'],82:['⛈️','Heavy showers'],
+    95:['⛈️','Thunderstorm'],96:['⛈️','Thunderstorm'],99:['⛈️','Severe storm']};
   function code(c){ return WMO[c] || ['🌡️','—']; }
-
-  var url = 'https://api.open-meteo.com/v1/forecast?latitude=' + LAT + '&longitude=' + LON +
-    '&current=temperature_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min' +
+  var url='https://api.open-meteo.com/v1/forecast?latitude='+LAT+'&longitude='+LON+
+    '&current=temperature_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min'+
     '&temperature_unit=fahrenheit&timezone=America%2FNew_York&forecast_days=7';
-
-  fetch(url)
-    .then(function(r){ return r.json(); })
-    .then(function(data){
-      var cur = data.current;
-      var ci = code(cur.weather_code);
-      document.getElementById('w-ico').textContent  = ci[0];
-      document.getElementById('w-temp').textContent = Math.round(cur.temperature_2m) + '°F';
-      document.getElementById('w-desc').textContent = ci[1] + ' right now at Lake Norman';
-
-      var days = data.daily;
-      var box = document.getElementById('forecast');
-      var names = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-      for (var i = 0; i < days.time.length; i++) {
-        var dt = new Date(days.time[i] + 'T12:00:00');
-        var di = code(days.weather_code[i]);
-        var el = document.createElement('div');
-        el.className = 'fc-day';
-        el.innerHTML = '<div class="d">' + names[dt.getDay()] + '</div>' +
-                       '<div class="i">' + di[0] + '</div>' +
-                       '<div class="t">' + Math.round(days.temperature_2m_max[i]) + '° / ' +
-                       Math.round(days.temperature_2m_min[i]) + '°</div>';
-        box.appendChild(el);
-      }
-    })
-    .catch(function(){
-      document.getElementById('w-temp').textContent = '—';
-      document.getElementById('w-desc').textContent =
-        'Live weather unavailable right now. See the typical late-July outlook below. 👇';
-    });
+  fetch(url).then(function(r){return r.json();}).then(function(data){
+    var cur=data.current, ci=code(cur.weather_code);
+    document.getElementById('w-ico').textContent=ci[0];
+    document.getElementById('w-temp').textContent=Math.round(cur.temperature_2m)+'°F';
+    document.getElementById('w-desc').textContent=ci[1]+' right now at Lake Norman';
+    var days=data.daily, box=document.getElementById('forecast'),
+        names=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    for (var i=0;i<days.time.length;i++){
+      var dt=new Date(days.time[i]+'T12:00:00'), di=code(days.weather_code[i]);
+      var el=document.createElement('div'); el.className='fc-day';
+      el.innerHTML='<div class="d">'+names[dt.getDay()]+'</div><div class="i">'+di[0]+
+        '</div><div class="t">'+Math.round(days.temperature_2m_max[i])+'° / '+
+        Math.round(days.temperature_2m_min[i])+'°</div>';
+      box.appendChild(el);
+    }
+  }).catch(function(){
+    document.getElementById('w-temp').textContent='—';
+    document.getElementById('w-desc').textContent=
+      'Live weather unavailable right now. See the typical late-July outlook below. 👇';
+  });
 </script>
 </body>
 </html>
