@@ -251,6 +251,19 @@
     color:#fff; padding:8px 16px; border-radius:999px; font-weight:600; font-size:.85rem; margin-top:8px;
     box-shadow:0 8px 20px rgba(255,62,108,.3); }
 
+  /* ---------- lake house rules ---------- */
+  .rules-list { list-style:none; counter-reset:rule; display:grid; gap:10px;
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); margin-top:8px; }
+  .rules-list li { counter-increment:rule; position:relative;
+    background:var(--cream); border-radius:14px; padding:14px 16px 14px 56px;
+    font-weight:600; box-shadow:0 6px 16px rgba(11,79,108,.08);
+    transition:transform .2s ease; }
+  .rules-list li:hover { transform:translateY(-3px); }
+  .rules-list li::before { content:counter(rule); position:absolute; left:12px; top:50%;
+    transform:translateY(-50%); width:32px; height:32px; border-radius:50%;
+    background:linear-gradient(160deg,var(--lake),var(--deep)); color:#fff;
+    display:flex; align-items:center; justify-content:center; font-weight:700; font-size:.9rem; }
+
   footer { text-align:center; color:var(--deep); font-size:.85rem; padding:24px 10px; opacity:.85; }
 
   @media (max-width:760px) {
@@ -458,6 +471,23 @@
           <p><em>Grocery, restaurants &amp; activities: TBD.</em></p>
         </div>
       </div>
+    </section>
+
+    <!-- ============ LAKE HOUSE RULES ============ -->
+    <section class="card">
+      <h2>📜 Lake House Rules</h2>
+      <ol class="rules-list">
+        <li>Leave your worries at the dock.</li>
+        <li>Sunscreen is not optional. ☀️</li>
+        <li>Naps are highly encouraged.</li>
+        <li>Cannonballs beat graceful dives. 💦</li>
+        <li>First one up makes the coffee. ☕</li>
+        <li>No shoes, no problem.</li>
+        <li>Bedtime is merely a suggestion.</li>
+        <li>Always say yes to one more s'more. 🔥</li>
+        <li>Phones down, faces to the sun.</li>
+        <li>What happens at the lake goes straight to the group chat. 📸</li>
+      </ol>
     </section>
 
   </div>
